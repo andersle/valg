@@ -109,3 +109,7 @@ resultater_valgkretser/*.json
 største_parti_kommuner/*.json
 største_parti_valgkretser/*.json
 valgkretser/*.geojson
+kart_valgkretser_i_kommuner/*.html
+kart_valgkretser_i_kommuner/cmd.sh
+kart_valgkretser_i_fylker/*html
+kart_valgkretser_i_fylker/cmd.sh
