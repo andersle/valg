@@ -25,6 +25,7 @@ Another example:
 python map_valgkretser_i_kommune.py resultater_valgkretser/kommune-5001-trondheim.json
 ```
 witch will generate the following map:
+
 ![trondheim](/examples/trondheim.png)
 
 And another example:
@@ -33,6 +34,7 @@ And another example:
 python map_valgkretser_i_kommune.py resultater_valgkretser/kommune-4601-bergen.json
 ```
 which will generate the following map:
+
 ![bergen](/examples/bergen.png)
 
 ### Mapping results for parties
@@ -45,6 +47,7 @@ used to display the voting areas where a given party got the most votes:
 python map_partier_i_valgkretser.py største_parti_valgkretser/*.json
 ```
 witch will generate the following map:
+
 ![valgkretser](/examples/map-partier-valgkretser.png)
 
 Another example:
@@ -53,6 +56,7 @@ Another example:
 python map_partier_i_valgkretser.py største_parti_valgkretser/folkeaksjonen-nei-til-mer-bompenger.json
 ```
 which will generate the following map:
+
 ![bompenger](/examples/bom.png)
 
 To map out similar results, but for municipalities, the script
@@ -62,6 +66,7 @@ To map out similar results, but for municipalities, the script
 python map_partier_kommuner.py største_parti_kommuner/*.json
 ```
 witch will generate the following map:
+
 ![kommuner](/examples/map-partier-kommuner.png)
 
 ## Sources
