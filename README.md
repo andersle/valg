@@ -15,12 +15,15 @@ will generate the following map:
 
 ![oslo](/examples/oslo.png)
 
+with html code as can be found [here](/examples/valgkretser-kommune-301-oslo.html).
+
 
 ```bash
 python map_valgkretser_i_kommune.py resultater_valgkretser/kommune-5001-trondheim.json
 ```
 will generate the following map:
 ![trondheim](/examples/trondheim.png)
+with html code as can be found [here](examples/valgkretser-kommune-5001-trondheim.html).
 
 ### Mapping results for parties
 
