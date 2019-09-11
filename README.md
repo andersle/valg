@@ -44,8 +44,16 @@ used to display the voting areas where a given party got the most votes:
 ```bash
 python map_partier_i_valgkretser.py største_parti_valgkretser/*.json
 ```
-will generate the following map:
+witch will generate the following map:
 ![valgkretser](/examples/map-partier-valgkretser.png)
+
+Another example:
+
+```bash
+python map_partier_i_valgkretser.py største_parti_valgkretser/folkeaksjonen-nei-til-mer-bompenger.json
+```
+which will generate the following map:
+![bompenger](/examples/bom.png)
 
 To map out similar results, but for municipalities, the script
 [map_partier_kommuner.py](map_partier_kommuner.py) is used:
