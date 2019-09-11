@@ -1,6 +1,6 @@
 # valg
 
-Mapping out the 2019 Norwegian local elections.
+Mapping out the [2019 Norwegian local elections](https://en.wikipedia.org/wiki/2019_Norwegian_local_elections).
 
 ## Examples:
 
