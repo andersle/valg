@@ -27,6 +27,14 @@ python map_valgkretser_i_kommune.py resultater_valgkretser/kommune-5001-trondhei
 witch will generate the following map:
 ![trondheim](/examples/trondheim.png)
 
+And another example:
+
+```bash
+python map_valgkretser_i_kommune.py resultater_valgkretser/kommune-4601-bergen.json
+```
+which will generate the following map:
+![bergen](/examples/bergen.png)
+
 ### Mapping results for parties
 
 To map results for individual parties, the script
