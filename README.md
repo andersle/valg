@@ -8,24 +8,30 @@ Note: The raw data is **not** included in this repository.
 
 ### Mapping results for voting areas
 
+To map the results in the voting areas in municipalities, the script
+[map_valgkretser_i_kommune.py](map_valgkretser_i_kommune.py) is used:
+
 ```bash
 python map_valgkretser_i_kommune.py resultater_valgkretser/kommune-301-oslo.json
 ```
-will generate the following map:
+which will generate the following map:
 
 ![oslo](/examples/oslo.png)
 
-with html code as can be found [here](/examples/valgkretser-kommune-301-oslo.html).
+Another example:
 
 
 ```bash
 python map_valgkretser_i_kommune.py resultater_valgkretser/kommune-5001-trondheim.json
 ```
-will generate the following map:
+witch will generate the following map:
 ![trondheim](/examples/trondheim.png)
-with html code as can be found [here](examples/valgkretser-kommune-5001-trondheim.html).
 
 ### Mapping results for parties
+
+To map results for individual parties, the script
+[map_partier_i_valgkretser.py](map_partier_i_valgkretser.py) can be
+used to display the voting areas where a given party got the most votes:
 
 ```bash
 python map_partier_i_valgkretser.py største_parti_valgkretser/*.json
@@ -33,10 +39,13 @@ python map_partier_i_valgkretser.py største_parti_valgkretser/*.json
 will generate the following map:
 ![valgkretser](/examples/map-partier-valgkretser.png)
 
+To map out similar results, but for municipalities, the script
+[map_partier_kommuner.py](map_partier_kommuner.py) is used:
+
 ```bash
 python map_partier_kommuner.py største_parti_kommuner/*.json
 ```
-will generate the following map:
+witch will generate the following map:
 ![kommuner](/examples/map-partier-kommuner.png)
 
 ## Sources
