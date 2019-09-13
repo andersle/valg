@@ -1,6 +1,7 @@
 # Copyright (c) 2019, Anders Lervik.
 # Distributed under the MIT License. See LICENSE for more info.
 """Create a map using folium."""
+import json
 import folium
 from legend import Legend
 
@@ -73,6 +74,15 @@ def default_style_function(item):
         'weight': 0.5,
     }
     return style
+
+
+def load_json_file(filename):
+    """Load data from a json file."""
+    data = {}
+    print('Loading file "{}"'.format(filename))
+    with open(filename, 'r') as infile:
+        data = json.load(infile)
+    return data
 
 
 def add_tiles_to_map(the_map):
