@@ -160,6 +160,49 @@ def create_folium_map(geojson_layers, map_settings):
     return the_map
 
 
+def create_folium_choropleth(geojson_layer, data, map_settings):
+    """Create a folium choropleth map.
+
+    Parameters
+    ----------
+    geojson_layer : dict
+        A geojson layer to add to the map.
+    data : object like pandas.DataFrame
+        The raw data to use for coloring.
+    map_settings : dict
+        A dict containing settings for initializing the map.
+
+    Returns
+    -------
+    the_map : object like folium.folium.Map
+        The map created here.
+
+    """
+    the_map = folium.Map(
+        location=map_settings.get('center', [63.447, 10.422]),
+        tiles=None,
+        zoom_start=map_settings.get('zoom', 9),
+    )
+    add_tiles_to_map(the_map)
+    title = map_settings.get('title', 'Unknown')
+    party = map_settings.get('party', 'Unknown')
+    legend = 'Oppslutning (%) for {} i {}'.format(party, title)
+    folium.Choropleth(
+        geo_data=geojson_layer,
+        name=map_settings.get('title', 'Unknown'),
+        data=data,
+        columns=['krets', 'oppslutning_prosentvis'],
+        key_on='feature.properties.valgkretsnummer',
+        fill_color='YlGn',
+        fill_opacity=0.7,
+        line_opacity=0.5,
+        legend_name=legend,
+        highlight=True,
+    ).add_to(the_map)
+    folium.LayerControl().add_to(the_map)
+    return the_map
+
+
 def produce_map(geojson_layers, center, zoom, output='map.html'):
     """Produce the folium map and save it to a file.
 
