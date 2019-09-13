@@ -31,7 +31,7 @@ which will generate the following map:
 
 ### Mapping largest party for voting areas
 
-To map the results in the voting areas in municipalities, the script
+To map the largest parties in the voting areas in municipalities, the script
 [map_valgkretser_i_kommune.py](map_valgkretser_i_kommune.py) is used:
 
 ```bash
