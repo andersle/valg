@@ -1,8 +1,10 @@
 # Copyright (c) 2019, Anders Lervik.
 # Distributed under the MIT License. See LICENSE for more info.
 """Create a map using folium."""
+from functools import partial
 import json
 import folium
+import branca.colormap as cm
 from legend import Legend
 
 
@@ -32,6 +34,23 @@ COLORS_PARTY = {
     'Kristelig Folkeparti': COLORS['cyan'],
     'Rødt': COLORS['purple'],
     'Andre': '#262626',
+}
+
+
+COLOR_MAPS = json.loads(cm.schemes_string)
+
+
+COLORS_PARTY_MAPS = {
+    'Arbeiderpartiet': 'Reds_03',
+    'Høyre': 'PuBu_03',
+    'Miljøpartiet De Grønne': 'YlGn_05',
+    'Senterpartiet':  'YlOrRd_03',
+    'SV - Sosialistisk Venstreparti': 'viridis',
+    'Fremskrittspartiet': 'viridis',
+    'Venstre': 'viridis',
+    'Folkeaksjonen Nei til mer bompenger': 'viridis',
+    'Kristelig Folkeparti': 'viridis',
+    'Rødt': 'Reds_05'
 }
 
 
@@ -69,6 +88,22 @@ def default_style_function(item):
         print('Missing color for {} --- using default'.format(party))
     style = {
         'fillColor': COLORS_PARTY.get(party, '#262626'),
+        'fillOpacity': OPACITY,
+        'color': '#262626',
+        'weight': 0.5,
+    }
+    return style
+
+
+def style_function_color_map(item, key, data, color_map):
+    """Style for geojson polygons."""
+    feature_key = item['properties'][key]
+    if feature_key not in data:
+        color = '#262626'
+    else:
+        color = color_map(data[feature_key])
+    style = {
+        'fillColor': color,
         'fillOpacity': OPACITY,
         'color': '#262626',
         'weight': 0.5,
@@ -195,6 +230,43 @@ def create_folium_map(geojson_layers, map_settings):
     return the_map
 
 
+def extract_data_valus(data, data_key, data_value):
+    """Extract value from a pandas.DataFrame
+
+    Parmeters
+    ---------
+    data : object like pandas.DataFrame
+        The raw data.
+    data_key : string
+        A column in data we will use for extrating id's.
+    data_value : string
+        A column in data which contains the values we are to extract.
+
+    Returns
+    -------
+    values : dict
+        A dict where the keys are the id's found in data_key and
+        the values are the correconding values from data_value.
+
+    """
+    data_dict = data.to_dict()
+    values = {}
+    for idx, key_value in data_dict[data_key].items():
+        values[key_value] = data_dict[data_value][idx]
+    return values
+
+
+def create_color_map(values, color_map_name):
+    """Create a color map to use with a geojson layer."""
+    vals = [i for _, i in values.items()]
+    linear = cm.LinearColormap(
+        COLOR_MAPS[color_map_name],
+        vmin=min(vals),
+        vmax=max(vals)
+    )
+    return linear
+
+
 def create_folium_choropleth(geojson_layer, data, map_settings):
     """Create a folium choropleth map.
 
@@ -222,18 +294,34 @@ def create_folium_choropleth(geojson_layer, data, map_settings):
     title = map_settings.get('title', 'Unknown')
     party = map_settings.get('party', 'Unknown')
     legend = 'Oppslutning (%) for {} i {}'.format(party, title)
-    folium.Choropleth(
-        geo_data=geojson_layer,
-        name=map_settings.get('title', 'Unknown'),
-        data=data,
-        columns=['krets', 'oppslutning_prosentvis'],
-        key_on='feature.properties.valgkretsnummer',
-        fill_color='YlGn',
-        fill_opacity=0.7,
-        line_opacity=0.5,
-        legend_name=legend,
-        highlight=True,
+
+    values = extract_data_valus(
+        data,
+        map_settings['data_key'],
+        map_settings['data_value']
+    )
+    if 'color_map_map' not in map_settings:
+        color_map_name = COLORS_PARTY_MAPS.get(party, 'viridis')
+    else:
+        color_map_name = map_settings('color_map_name')
+    linear = create_color_map(values, color_map_name)
+
+    style_function = partial(
+        style_function_color_map,
+        key='valgkretsnummer',
+        data=values,
+        color_map=linear,
+    )
+    folium.GeoJson(
+        geojson_layer,
+        name=title,
+        style_function=style_function,
+        highlight_function=default_highlight_function,
+        tooltip=map_settings.get('tooltip', None),
     ).add_to(the_map)
+
+    linear.caption = legend
+    the_map.add_child(linear)
     folium.LayerControl().add_to(the_map)
     return the_map
 

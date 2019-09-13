@@ -5,7 +5,11 @@ import pathlib
 import sys
 import pandas as pd
 import numpy as np
-from map_basics import create_folium_choropleth, load_json_file
+from map_basics import (
+    create_folium_choropleth,
+    load_json_file,
+    create_tool_tip,
+)
 
 
 VALGKRETS_DIR = pathlib.Path('valgkretser')
@@ -65,6 +69,11 @@ def get_geojson_data(result_file, kommune_id):
             raw_data['krets'].append(krets)
             raw_data['oppslutning_prosentvis'].append(missing)
             raw_data['krets_navn'] = 'Missing data'
+        idx = raw_data['krets'].index(krets)
+        feature['properties']['oppslutning'] = '({:4.2f} %)'.format(
+            raw_data['oppslutning_prosentvis'][idx]
+        )
+        feature['properties']['partinavn'] = data['navn']
 
     results = pd.DataFrame.from_dict(raw_data)
 
@@ -73,6 +82,13 @@ def get_geojson_data(result_file, kommune_id):
         'party': data['navn'],
         'center': get_center(geojson_data['features'])[::-1],
         'zoom': 10,
+        'data_key': 'krets',
+        'data_value': 'oppslutning_prosentvis',
+        'tooltip': create_tool_tip(
+            ('valgkretsnavn', 'partinavn', 'oppslutning'),
+            ('Krets:', 'Parti', 'Oppslutning (%)'),
+            labels=False,
+        )
     }
     return geojson_data, results, map_settings
 

@@ -6,7 +6,19 @@ Mapping out the [2019 Norwegian local elections](https://en.wikipedia.org/wiki/2
 
 Note: The raw data is **not** included in this repository.
 
-### Mapping results for voting areas
+### Mapping results for a party in voting areas
+
+To map results in the voting area in municipalities for a given party, the
+script [map_partier_i_kommune.py](map_partier_i_kommune.py) is used:
+
+```bash
+python map_partier_i_kommune.py resultater_valgkretser_per_parti/folkeaksjonen-nei-til-mer-bompenger.json 301
+```
+which will generate the following map:
+
+![oslofnb](/examples/oslofnb.png)
+
+### Mapping largest party for voting areas
 
 To map the results in the voting areas in municipalities, the script
 [map_valgkretser_i_kommune.py](map_valgkretser_i_kommune.py) is used:
