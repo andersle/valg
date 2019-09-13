@@ -232,5 +232,5 @@ def produce_map(geojson_layers, center, zoom, output='map.html'):
     """
     map_settings = {'center': center, 'zoom': zoom}
     the_map = create_folium_map(geojson_layers, map_settings)
-    print('Writing map to: {}'.format(output))
+    print('Writing map to "{}"'.format(output))
     the_map.save(output)

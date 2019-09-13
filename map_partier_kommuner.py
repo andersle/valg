@@ -16,7 +16,7 @@ def get_geojson_data(result_files):
     """Read in result files and produce corresponding geojson data."""
     all_geojson_data = []
     for result_file in result_files:
-        print('Reading file:', result_file)
+        print('Reading file "{}"'.format(result_file))
         new_data = {'features': []}
         results = pd.read_json(result_file)
         kommuner = results['Kommunenummer'].tolist()
