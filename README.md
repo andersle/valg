@@ -5,6 +5,7 @@ Mapping out the [2019 Norwegian local elections](https://en.wikipedia.org/wiki/2
 ## Examples:
 
 Note: The raw data is **not** included in this repository.
+Please see the [sources](#sources) given below.
 
 ### Mapping results for a party in voting areas
 
