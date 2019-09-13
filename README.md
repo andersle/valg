@@ -19,6 +19,16 @@ which will generate the following map:
 
 ![oslofnb](/examples/oslofnb.png)
 
+Another example:
+
+```bash
+python map_partier_i_kommune.py resultater_valgkretser_per_parti/miljopartiet-de-gronne.json 5001
+```
+
+which will generate the following map:
+![trondheimmdg](/examples/trondheimmdg.png)
+
+
 ### Mapping largest party for voting areas
 
 To map the results in the voting areas in municipalities, the script
