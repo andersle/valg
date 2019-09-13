@@ -1,11 +1,10 @@
 # Copyright (c) 2019, Anders Lervik.
 # Distributed under the MIT License. See LICENSE for more info.
 """Create a map showing for which municipalities a given party is largest."""
-import json
 import pathlib
 import sys
 import pandas as pd
-from map_basics import produce_map
+from map_basics import produce_map, load_json_file
 
 
 # Define paths to the raw geojson files:
@@ -29,9 +28,7 @@ def get_geojson_data(result_files):
             geojson_file = KOMMUNE_DIR.joinpath(
                 KOMMUNE_KRETS.format(kommune_id)
             )
-            print('Loading:', geojson_file)
-            with open(geojson_file, 'r') as infile:
-                geojson_data = json.load(infile)
+            geojson_data = load_json_file(geojson_file)
             for key in ('crs', 'type'):
                 if key not in new_data:
                     new_data[key] = geojson_data[key]

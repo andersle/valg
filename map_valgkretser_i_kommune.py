@@ -1,12 +1,11 @@
 # Copyright (c) 2019, Anders Lervik.
 # Distributed under the MIT License. See LICENSE for more info.
 """Create a map showing the largest party in different voting areas."""
-import json
 import pathlib
 import sys
 import pandas as pd
 import numpy as np
-from map_basics import produce_map
+from map_basics import produce_map, load_json_file
 
 
 VALGKRETS_DIR = pathlib.Path('valgkretser')
@@ -40,9 +39,7 @@ def get_geojson_data(result_files):
                 str(kommune).rjust(4, '0')
             )
         )
-        with open(geojson_file, 'r') as infile:
-            geojson_data = json.load(infile)
-
+        geojson_data = load_json_file(geojson_file)
         parti = results[results['Kommunenummer'] == kommune]['Partinavn']
         for feature in geojson_data['features']:
             if not use_all:
