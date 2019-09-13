@@ -5,7 +5,7 @@ import pathlib
 import sys
 import pandas as pd
 import numpy as np
-from map_basics import produce_map, load_json_file
+from map_basics import produce_map, load_json_file, create_tool_tip
 
 
 VALGKRETS_DIR = pathlib.Path('valgkretser')
@@ -25,6 +25,7 @@ def get_geojson_data(result_files):
     """Read in result files are produce corresponding geojson data."""
     all_geojson_data = []
     coordinates = []
+    tooltip = []
     for result_file in result_files:
         print('Reading file "{}"'.format(result_file))
         results = pd.read_json(result_file)
@@ -40,30 +41,42 @@ def get_geojson_data(result_files):
             )
         )
         geojson_data = load_json_file(geojson_file)
-        parti = results[results['Kommunenummer'] == kommune]['Partinavn']
+        row = results[results['Kommunenummer'] == kommune]
         for feature in geojson_data['features']:
             if not use_all:
                 # Update to new region:
                 nummer = feature['properties']['valgkretsnummer']
-                parti = results[
-                    results['Stemmekretsnummer'] == nummer
-                ]['Partinavn']
-            feature['properties']['partinavn'] = parti.tolist()[0]
+                row = results[results['Stemmekretsnummer'] == nummer]
+            feature['properties']['partinavn'] = row['Partinavn'].tolist()[0]
+            feature['properties']['oppslutning'] = '({:4.2f} %)'.format(
+                row['Oppslutning prosentvis'].tolist()[0]
+            )
             _add_coordinates(feature, coordinates)
         all_geojson_data.append((kommune_navn, geojson_data))
-    avg = np.average(coordinates, axis=0)
-    return all_geojson_data, avg
+        tooltip.append(
+            create_tool_tip(
+                ('valgkretsnavn', 'partinavn', 'oppslutning'),
+                ('Valgkrets:', 'Største parti:', 'Oppslutning (%):'),
+                labels=False,
+            )
+        )
+    map_settings = {
+        'center': np.average(coordinates, axis=0)[::-1],
+        'zoom': 10,
+        'tooltip': tooltip,
+    }
+    return all_geojson_data, map_settings
 
 
 def main(result_files):
     """Read input files and create the map."""
-    geojson_data, center = get_geojson_data(result_files)
+    geojson_data, map_settings = get_geojson_data(result_files)
     if len(result_files) == 1:
         filename = pathlib.Path(result_files[0]).stem
         out = 'valgkretser-{}.html'.format(filename)
     else:
         out = 'map-valgkretser.html'
-    produce_map(geojson_data, center[::-1], 10, output=out)
+    produce_map(geojson_data, map_settings, output=out)
 
 
 if __name__ == '__main__':

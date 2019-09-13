@@ -76,6 +76,22 @@ def default_style_function(item):
     return style
 
 
+def default_highlight_function(item):
+    """Style for geojson highlighting."""
+    return {'weight': 2.0, 'fillOpacity': OPACITY + 0.15}
+
+
+def create_tool_tip(fields, aliases, labels=True):
+    """Create tool tip to add to the map."""
+    tool = folium.GeoJsonTooltip(
+        fields=fields,
+        aliases=aliases,
+        style=('font-size: 14px;'),
+        labels=labels,
+    )
+    return tool
+
+
 def load_json_file(filename):
     """Load data from a json file."""
     data = {}
@@ -118,7 +134,8 @@ def add_legend_to_map(the_map):
 
 
 def add_geojson_layers(the_map, geojson_layers,
-                       style_function=default_style_function):
+                       style_function=default_style_function,
+                       tooltip=None):
     """Add geojson layers to a map.
 
     Parameters
@@ -130,13 +147,19 @@ def add_geojson_layers(the_map, geojson_layers,
     style_function : callable, optional
         A style function for defining the style to use when drawing
         the geojson layers.
+    tooltip : list of objects like folium.features.GeoJsonTooltip, optional
+        A tooltip to add to the map.
 
     """
-    for name, data in geojson_layers:
+    if tooltip is None:
+        tooltip = [None for _ in geojson_layers]
+    for (name, data), tool in zip(geojson_layers, tooltip):
         folium.GeoJson(
             data,
             name=name,
-            style_function=style_function
+            style_function=style_function,
+            highlight_function=default_highlight_function,
+            tooltip=tool
         ).add_to(the_map)
 
 
@@ -164,7 +187,9 @@ def create_folium_map(geojson_layers, map_settings):
         zoom_start=map_settings.get('zoom', 9),
     )
     add_tiles_to_map(the_map)
-    add_geojson_layers(the_map, geojson_layers)
+    add_geojson_layers(
+        the_map, geojson_layers, tooltip=map_settings.get('tooltip', None)
+    )
     folium.LayerControl().add_to(the_map)
     add_legend_to_map(the_map)
     return the_map
@@ -213,7 +238,7 @@ def create_folium_choropleth(geojson_layer, data, map_settings):
     return the_map
 
 
-def produce_map(geojson_layers, center, zoom, output='map.html'):
+def produce_map(geojson_layers, map_settings, output='map.html'):
     """Produce the folium map and save it to a file.
 
     Parameters
@@ -222,15 +247,12 @@ def produce_map(geojson_layers, center, zoom, output='map.html'):
         Each typle is of form (name, geojson-dict) where the
         name is used as a label and the geojson-dict contains
         the geojson layer to be shown.
-    center : tuple of floats
-        The initial center of the folium map.
-    zoom : int
-        The initial zoom level of the folium map.
+    map_settings : dict
+        A dict with settings for the folium map.
     output : string, optional
         The file name to write the map to.
 
     """
-    map_settings = {'center': center, 'zoom': zoom}
     the_map = create_folium_map(geojson_layers, map_settings)
     print('Writing map to "{}"'.format(output))
     the_map.save(output)
