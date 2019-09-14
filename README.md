@@ -92,6 +92,21 @@ witch will generate the following map:
 
 ![kommuner](/examples/map-partier-kommuner.png)
 
+
+### Mapping results for county councils
+
+To map results for county councils the script
+[kart_resultat_valgkretser_i_fylke.py](kart_resultat_valgkretser_i_fylke.py) is used: 
+
+```bash
+python kart_resultat_valgkretser_i_fylke.py 2019-09-14_partifordeling_2_ko_2019.csv 50
+```
+
+which will generate the following map:
+
+![trondelag](/examples/trondelag.png)
+
+
 ## Sources
 
 - For mapping: [Kartverket](https://kartkatalog.geonorge.no/metadata/kartverket/valgkretser/885225ca-a29f-4b22-95be-f886db66e4bb)
