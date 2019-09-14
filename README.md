@@ -101,11 +101,37 @@ To map results for county councils the script
 ```bash
 python kart_resultat_kommuner_i_fylke.py 2019-09-14_partifordeling_2_ko_2019.csv 50
 ```
-
 which will generate the following map:
 
 ![trondelag](/examples/trondelag.png)
 
+To map the resuts on a more detailed level for a county, the script
+[kart_resultat_valgkretser_i_kommune.py](kart_resultat_valgkretser_i_kommune.py)
+can by used by providing the municipality identifiers within the county.
+
+For convenience, there is a script,
+[get_kommuner_i_fylke.py](get_kommuner_i_fylke.py), which can be used to get
+this info. As an example:
+
+```bash
+python get_kommuner_i_fylke.py 2019-09-14_partifordeling_4_ko_2019.csv 50
+```
+
+which will print out:
+
+```bash
+5001 5006 5007 5014 5020 5021 5022 5025 5026 5027 5028 5029 5031 5032 5033 5034 5035 5036 5037 5038 5041 5042 5043 5044 5045 5046 5047 5049 5052 5053 5054 5055 5056 5057 5058 5059 5060 5061
+```
+
+which in turn can be used:
+
+```bash
+python kart_resultat_valgkretser_i_kommune.py 2019-09-14_partifordeling_4_ko_2019.csv 5001 5006 5007 5014 5020 5021 5022 5025 5026 5027 5028 5029 5031 5032 5033 5034 5035 5036 5037 5038 5041 5042 5043 5044 5045 5046 5047 5049 5052 5053 5054 5055 5056 5057 5058 5059 5060 5061
+```
+
+which will produce the following map:
+
+![trondelagkrets](/examples/trondelagkrets.png)
 
 ## Sources
 
