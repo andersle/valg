@@ -247,16 +247,14 @@ def create_folium_map(geojson_layers, map_settings):
     return the_map
 
 
-def extract_data_valus(data, data_key, data_value):
+def extract_data_values(data, value_key):
     """Extract value from a pandas.DataFrame
 
     Parmeters
     ---------
-    data : object like pandas.DataFrame
+    data : dict
         The raw data.
-    data_key : string
-        A column in data we will use for extrating id's.
-    data_value : string
+    value_key : string
         A column in data which contains the values we are to extract.
 
     Returns
@@ -266,10 +264,9 @@ def extract_data_valus(data, data_key, data_value):
         the values are the correconding values from data_value.
 
     """
-    data_dict = data.to_dict()
     values = {}
-    for idx, key_value in data_dict[data_key].items():
-        values[key_value] = data_dict[data_value][idx]
+    for key in data:
+        values[key] = data[key][value_key]
     return values
 
 
@@ -291,7 +288,7 @@ def create_folium_choropleth(geojson_layer, data, map_settings):
     ----------
     geojson_layer : dict
         A geojson layer to add to the map.
-    data : object like pandas.DataFrame
+    data : dict
         The raw data to use for coloring.
     map_settings : dict
         A dict containing settings for initializing the map.
@@ -312,10 +309,9 @@ def create_folium_choropleth(geojson_layer, data, map_settings):
     party = map_settings.get('party', 'Unknown')
     legend = 'Oppslutning (%) for {} i {}'.format(party, title)
 
-    values = extract_data_valus(
+    values = extract_data_values(
         data,
-        map_settings['data_key'],
-        map_settings['data_value']
+        map_settings['value_key']
     )
     if 'color_map_map' not in map_settings:
         color_map_name = COLORS_PARTY_MAPS.get(party, 'viridis')
@@ -325,7 +321,7 @@ def create_folium_choropleth(geojson_layer, data, map_settings):
 
     style_function = partial(
         style_function_color_map,
-        key='valgkretsnummer',
+        key='krets',
         data=values,
         color_map=linear,
     )
