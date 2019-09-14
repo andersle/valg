@@ -3,12 +3,13 @@
 """Create a map showing voting areas where a given party is largest."""
 import pathlib
 import sys
-import pandas as pd
+from slugify import slugify
 from map_basics import (
     produce_map,
     COLORS_PARTY,
     load_json_file,
     create_tool_tip,
+    read_csv_results,
 )
 
 
@@ -32,41 +33,84 @@ def _add_dict_keys(keys, from_dict, others):
                 to_dict[key] = from_dict[key]
 
 
-def get_geojson_data(result_files):
+def extract_data(results, party):
+    """Extract the data we want from the results."""
+    area = {}
+    alle_kommuner = [
+        i for i in results.groupby(['Kommunenummer']).groups.keys()
+    ]
+    for kommune in alle_kommuner:
+        kommune_data = results[results['Kommunenummer'] == kommune].groupby(
+            ['Stemmekretsnummer']
+        )
+        for name, group in kommune_data:
+            idx = group['Oppslutning prosentvis'].idxmax()
+            maxi = results.iloc[idx, :]
+            if maxi['Partinavn'] == party:
+                if kommune not in area:
+                    area[kommune] = {}
+                area[kommune][name] = {
+                    'partinavn': maxi['Partinavn'],
+                    'oppslutning': maxi['Oppslutning prosentvis'],
+                    'krets': maxi['Stemmekretsnavn'],
+                    'kommune_navn': maxi['Kommunenavn']
+                }
+    return area
+
+
+def _same_for_all(kretser):
+    """Check if the result it for the whole municipality."""
+    for _, krets_data in kretser.items():
+        if krets_data['krets'] == 'Hele kommunen':
+            return True, krets_data
+    return False, None
+
+
+def add_to_features(features, kretser, party):
+    """Add data from the areas to the features."""
+    same_all, krets_data = _same_for_all(kretser)
+    for feature in features:
+        krets = str(
+            feature['properties']['valgkretsnummer']
+        ).rjust(4, '0')
+        if not same_all:
+            if krets in kretser:
+                krets_data = kretser[krets]
+            else:
+                krets_data = None
+        if krets_data is not None:
+            feature['properties']['use_this_feature'] = True
+            feature['properties']['partinavn'] = party
+            feature['properties']['oppslutning'] = (
+                '({:4.2f} %)'.format(
+                    krets_data['oppslutning']
+                )
+            )
+
+
+def get_geojson_data(raw_data, parties):
     """Read in result files are produce corresponding geojson data."""
+    results = read_csv_results(raw_data)
     all_geojson_data = []
     andre = {'features': []}
     tooltip = []
-    for result_file in result_files:
-        print('Reading file "{}"'.format(result_file))
-        results = pd.read_json(result_file)
-        # Each file is assumed to only contain results for one party:
-        parti = results['Partinavn'].tolist()[0]
 
+    for party in parties:
+        print('Adding for party "{}"'.format(party))
         new_data = {'features': []}
-        for _, row in results.iterrows():
-            kommune = str(int(row['Kommunenummer']))
-            krets = int(row['Stemmekretsnummer'])
-            krets_navn = row['Stemmekretsnavn']
-            kommune_id = '{}'.format(kommune).rjust(4, '0')
-            geojson_data = _load_geojson_file(kommune_id)
+        area = extract_data(results, party)
+        for kommune, kretser in area.items():
+            geojson_data = _load_geojson_file(kommune)
             _add_dict_keys(('crs', 'type'), geojson_data, (new_data, andre))
-
+            add_to_features(geojson_data['features'], kretser, party)
             for feature in geojson_data['features']:
-                nummer = feature['properties']['valgkretsnummer']
-                if krets_navn == 'Hele kommunen' or nummer == krets:
-                    feature['properties']['partinavn'] = parti
-                    feature['properties']['oppslutning'] = (
-                        '({:4.2f} %)'.format(
-                            row['Oppslutning prosentvis']
-                        )
-                    )
-                    if parti in COLORS_PARTY:
+                if 'use_this_feature' in feature['properties']:
+                    if party in COLORS_PARTY:
                         new_data['features'].append(feature)
                     else:
                         andre['features'].append(feature)
-        if new_data['features'] and parti in COLORS_PARTY:
-            all_geojson_data.append((parti, new_data))
+        if new_data['features'] and party in COLORS_PARTY:
+            all_geojson_data.append((party, new_data))
             tooltip.append(
                 create_tool_tip(
                     ('valgkretsnavn', 'partinavn', 'oppslutning'),
@@ -91,16 +135,15 @@ def get_geojson_data(result_files):
     return all_geojson_data, map_settings
 
 
-def main(result_files):
+def main(raw_data, parties):
     """Read input files and create the map."""
-    geojson_data, map_settings = get_geojson_data(result_files)
-    if len(result_files) == 1:
-        filename = pathlib.Path(result_files[0]).stem
-        out = 'valgkretser-{}.html'.format(filename)
+    geojson_data, map_settings = get_geojson_data(raw_data, parties)
+    if len(parties) == 1:
+        out = 'valgkretser-{}.html'.format(slugify(parties[0]))
     else:
         out = 'map-partier-valgkretser.html'
     produce_map(geojson_data, map_settings, output=out)
 
 
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    main(sys.argv[1], sys.argv[2:])
