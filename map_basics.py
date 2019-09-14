@@ -3,6 +3,7 @@
 """Create a map using folium."""
 from functools import partial
 import json
+import pandas as pd
 import folium
 import branca.colormap as cm
 from legend import Legend
@@ -79,6 +80,22 @@ TILES = [
 
 
 OPACITY = 0.7
+
+
+def read_csv_results(result_file):
+    """Read the results from the given csv file."""
+    print('Reading results from "{}"'.format(result_file))
+    results = pd.read_csv(
+        result_file,
+        sep=';',
+        decimal=',',
+        converters={
+            'Fylkenummer': str,
+            'Kommunenummer': str,
+            'Stemmekretsnummer': str
+        },
+    )
+    return results
 
 
 def default_style_function(item):
