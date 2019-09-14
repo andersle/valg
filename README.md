@@ -96,10 +96,10 @@ witch will generate the following map:
 ### Mapping results for county councils
 
 To map results for county councils the script
-[kart_resultat_valgkretser_i_fylke.py](kart_resultat_valgkretser_i_fylke.py) is used: 
+[kart_resultat_kommuner_i_fylke.py](kart_resultat_kommuner_i_fylke.py) is used: 
 
 ```bash
-python kart_resultat_valgkretser_i_fylke.py 2019-09-14_partifordeling_2_ko_2019.csv 50
+python kart_resultat_kommuner_i_fylke.py 2019-09-14_partifordeling_2_ko_2019.csv 50
 ```
 
 which will generate the following map:
