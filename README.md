@@ -7,13 +7,14 @@ Mapping out the [2019 Norwegian local elections](https://en.wikipedia.org/wiki/2
 Note: The raw data is **not** included in this repository.
 Please see the [sources](#sources) given below.
 
+
 ### Mapping results for a party in voting areas
 
 To map results in the voting area in municipalities for a given party, the
-script [map_partier_i_kommune.py](map_partier_i_kommune.py) is used:
+script [kart_parti_i_kommune.py](kart_parti_i_kommune.py) is used:
 
 ```bash
-python map_partier_i_kommune.py resultater_valgkretser_per_parti/folkeaksjonen-nei-til-mer-bompenger.json 301
+python kart_parti_i_kommune.py 2019-09-14_partifordeling_4_ko_2019.csv "Folkeaksjonen Nei til mer bompenger" 0301
 ```
 which will generate the following map:
 
@@ -22,31 +23,33 @@ which will generate the following map:
 Another example:
 
 ```bash
-python map_partier_i_kommune.py resultater_valgkretser_per_parti/miljopartiet-de-gronne.json 5001
+python kart_parti_i_kommune.py 2019-09-14_partifordeling_4_ko_2019.csv "Miljøpartiet De Grønne" 5001
 ```
 
 which will generate the following map:
 ![trondheimmdg](/examples/trondheimmdg.png)
 
 
-### Mapping largest party for voting areas
+### Mapping the largest party in voting areas in municipalities
 
 To map the largest parties in the voting areas in municipalities, the script
-[map_valgkretser_i_kommune.py](map_valgkretser_i_kommune.py) is used:
+[kart_resultat_valgkretser_i_kommune.py](kart_resultat_valgkretser_i_kommune.py) is used:
+
 
 ```bash
-python map_valgkretser_i_kommune.py resultater_valgkretser/kommune-301-oslo.json
+python kart_resultat_valgkretser_i_kommune.py 2019-09-14_partifordeling_4_ko_2019.csv 0301
 ```
 which will generate the following map:
 
 ![oslo](/examples/oslo.png)
 
+
 Another example:
 
-
 ```bash
-python map_valgkretser_i_kommune.py resultater_valgkretser/kommune-5001-trondheim.json
+python kart_resultat_valgkretser_i_kommune.py 2019-09-14_partifordeling_4_ko_2019.csv 5001
 ```
+
 witch will generate the following map:
 
 ![trondheim](/examples/trondheim.png)
@@ -54,39 +57,36 @@ witch will generate the following map:
 And another example:
 
 ```bash
-python map_valgkretser_i_kommune.py resultater_valgkretser/kommune-4601-bergen.json
+python kart_resultat_valgkretser_i_kommune.py 2019-09-14_partifordeling_4_ko_2019.csv 4601 4627 4630
 ```
 which will generate the following map:
 
 ![bergen](/examples/bergen.png)
 
-### Mapping results for parties
-
-To map results for individual parties, the script
-[map_partier_i_valgkretser.py](map_partier_i_valgkretser.py) can be
-used to display the voting areas where a given party got the most votes:
-
-```bash
-python map_partier_i_valgkretser.py største_parti_valgkretser/*.json
-```
-witch will generate the following map:
+As shown above, the script accepts multiple values for the municipality. One can
+for instance create a full map for the whole of Norway:
 
 ![valgkretser](/examples/map-partier-valgkretser.png)
 
-Another example:
+
+### Mapping results for parties
+
+To map results for individual parties, the script
+[kart_resultat_parti_i_valgkretser.py](kart_resultat_parti_i_valgkretser.py) can be
+used to display the voting areas where a given party got the most votes:
 
 ```bash
-python map_partier_i_valgkretser.py største_parti_valgkretser/folkeaksjonen-nei-til-mer-bompenger.json
+python kart_resultat_parti_i_valgkretser.py 2019-09-14_partifordeling_4_ko_2019.csv "Folkeaksjonen Nei til mer bompenger" "Fremskrittspartiet"
 ```
-which will generate the following map:
+witch will generate the following map:
 
 ![bompenger](/examples/bom.png)
 
 To map out similar results, but for municipalities, the script
-[map_partier_kommuner.py](map_partier_kommuner.py) is used:
+[kart_resultat_parti_i_kommuner.py](kart_resultat_parti_i_kommuner.py) is used:
 
 ```bash
-python map_partier_kommuner.py største_parti_kommuner/*.json
+python kart_resultat_parti_i_kommuner.py 2019-09-14_partifordeling_2_ko_2019.csv Arbeiderpartiet Høyre Senterpartiet
 ```
 witch will generate the following map:
 
