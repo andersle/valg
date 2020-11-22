@@ -38,7 +38,7 @@ COLORS_PARTY = {
 }
 
 
-COLOR_MAPS = json.loads(cm.schemes_string)
+COLOR_MAPS = cm._schemes
 
 
 COLORS_PARTY_MAPS = {
